@@ -1,2 +1,5 @@
 .env
+checksumer-deleted.log
+checksumer-moved.log
+checksumer-unmatched.log
 node_modules

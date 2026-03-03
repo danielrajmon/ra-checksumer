@@ -30,7 +30,7 @@ export async function findFileMatchByChecksum(platformId: number, md5: string): 
       SELECT
         f.platform_id AS "platformId",
         f.game_id AS "gameId",
-        g.game_title AS "gameTitle",
+        g.title AS "gameTitle",
         f.name AS "fileName",
         (
           SELECT COUNT(*) > 1
@@ -45,7 +45,7 @@ export async function findFileMatchByChecksum(platformId: number, md5: string): 
       FROM files f
       INNER JOIN games g
         ON g.platform_id = f.platform_id
-        AND g.game_id = f.game_id
+        AND g.id = f.game_id
       WHERE f.platform_id = $1
         AND f.md5 = $2
       LIMIT 1
@@ -63,8 +63,7 @@ export async function findFileMatchByChecksum(platformId: number, md5: string): 
 export async function markFileOwned(
   platformId: number,
   gameId: number,
-  md5: string,
-  originalName: string,
+  md5: string
 ): Promise<void> {
   const normalizedMd5 = md5.toLowerCase();
 
@@ -72,27 +71,26 @@ export async function markFileOwned(
     `
       UPDATE files
       SET
-        is_owned = TRUE,
-        original_name = $4
+        is_owned = TRUE
       WHERE platform_id = $1
         AND game_id = $2
         AND md5 = $3
     `,
-    [platformId, gameId, normalizedMd5, originalName],
+    [platformId, gameId, normalizedMd5],
   );
 
   await query(
     `
       UPDATE games g
-      SET owned = EXISTS (
+      SET is_owned = EXISTS (
         SELECT 1
         FROM files f
         WHERE f.platform_id = g.platform_id
-          AND f.game_id = g.game_id
+          AND f.game_id = g.id
           AND f.is_owned = TRUE
       )
       WHERE g.platform_id = $1
-        AND g.game_id = $2
+        AND g.id = $2
     `,
     [platformId, gameId],
   );

@@ -324,7 +324,6 @@ async function processSourceFile(
             matchedFile.platformId,
             matchedFile.gameId,
             matchedFile.md5,
-            path.basename(sourceFilePath),
         );
 
         await logMoved(
@@ -414,9 +413,7 @@ export async function runChecksumerService(): Promise<ProcessSummary> {
         for (const sourceRootPath of sourceRomPaths) {
             try {
                 allFiles.push(...(await listFilesRecursive(sourceRootPath)));
-            } catch (error) {
-                console.error(`[checksumer] skipping unreadable source path "${sourceRootPath}": ${error instanceof Error ? error.message : String(error)}`);
-            }
+            } catch (error) { }
         }
 
         const totalFiles = allFiles.length;
