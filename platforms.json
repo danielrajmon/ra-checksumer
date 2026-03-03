@@ -1,0 +1,814 @@
+{
+  "platforms": [
+    {
+      "id": 1,
+      "name": "Sega Mega Drive",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/megadrive"
+      ],
+      "destinationRomPath": "C:/ROMS/megadrive",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/megadrive"
+    },
+    {
+      "id": 2,
+      "name": "Nintendo 64",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/n64"
+      ],
+      "destinationRomPath": "C:/ROMS/n64",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/n64"
+    },
+    {
+      "id": 3,
+      "name": "Nintendo SNES",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/snes"
+      ],
+      "destinationRomPath": "C:/ROMS/snes",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/snes"
+    },
+    {
+      "id": 4,
+      "name": "Nintendo Game Boy",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/gb"
+      ],
+      "destinationRomPath": "C:/ROMS/gb",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/gb"
+    },
+    {
+      "id": 5,
+      "name": "Nintendo Game Boy Advance",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/gba"
+      ],
+      "destinationRomPath": "C:/ROMS/gba",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/gba"
+    },
+    {
+      "id": 6,
+      "name": "Nintendo Game Boy Color",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/gbc"
+      ],
+      "destinationRomPath": "C:/ROMS/gbc",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/gbc"
+    },
+    {
+      "id": 7,
+      "name": "Nintendo Entertainment System",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/nes"
+      ],
+      "destinationRomPath": "C:/ROMS/nes",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/nes"
+    },
+    {
+      "id": 8,
+      "name": "NEC TurboGrafx-16",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/tg16"
+      ],
+      "destinationRomPath": "C:/ROMS/tg16",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/tg16"
+    },
+    {
+      "id": 9,
+      "name": "Sega CD",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/segacd"
+      ],
+      "destinationRomPath": "C:/ROMS/segacd",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/segacd"
+    },
+    {
+      "id": 10,
+      "name": "Sega Mega Drive 32X",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/sega32x"
+      ],
+      "destinationRomPath": "C:/ROMS/sega32x",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/sega32x"
+    },
+    {
+      "id": 11,
+      "name": "Sega Master System",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/mastersystem"
+      ],
+      "destinationRomPath": "C:/ROMS/mastersystem",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/mastersystem"
+    },
+    {
+      "id": 12,
+      "name": "Sony PlayStation",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/psx"
+      ],
+      "destinationRomPath": "C:/ROMS/psx",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/psx"
+    },
+    {
+      "id": 13,
+      "name": "Atari Lynx",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/atarilynx"
+      ],
+      "destinationRomPath": "C:/ROMS/atarilynx",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/atarilynx"
+    },
+    {
+      "id": 14,
+      "name": "SNK Neo Geo Pocket",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/ngp"
+      ],
+      "destinationRomPath": "C:/ROMS/ngp",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/ngp"
+    },
+    {
+      "id": 15,
+      "name": "Sega Game Gear",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/gamegear"
+      ],
+      "destinationRomPath": "C:/ROMS/gamegear",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/gamegear"
+    },
+    {
+      "id": 16,
+      "name": "Nintendo GameCube",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/gc"
+      ],
+      "destinationRomPath": "C:/ROMS/gc",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/gc"
+    },
+    {
+      "id": 17,
+      "name": "Atari Jaguar",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/atarijaguar"
+      ],
+      "destinationRomPath": "C:/ROMS/atarijaguar",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/atarijaguar"
+    },
+    {
+      "id": 18,
+      "name": "Nintendo DS",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/nds"
+      ],
+      "destinationRomPath": "C:/ROMS/nds",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/nds"
+    },
+    {
+      "id": 19,
+      "name": "Nintendo Wii",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/wii"
+      ],
+      "destinationRomPath": "C:/ROMS/wii",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/wii"
+    },
+    {
+      "id": 20,
+      "name": "Nintendo Wii U",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/wiiu"
+      ],
+      "destinationRomPath": "C:/ROMS/wiiu",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/wiiu"
+    },
+    {
+      "id": 21,
+      "name": "Sony PlayStation 2",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/ps2"
+      ],
+      "destinationRomPath": "C:/ROMS/ps2",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/ps2"
+    },
+    {
+      "id": 22,
+      "name": "Microsoft Xbox",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/xbox"
+      ],
+      "destinationRomPath": "C:/ROMS/xbox",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/xbox"
+    },
+    {
+      "id": 23,
+      "name": "Magnavox Odyssey 2",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/odyssey2"
+      ],
+      "destinationRomPath": "C:/ROMS/odyssey2",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/odyssey2"
+    },
+    {
+      "id": 24,
+      "name": "Pokemon Mini",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/pokemini"
+      ],
+      "destinationRomPath": "C:/ROMS/pokemini",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/pokemini"
+    },
+    {
+      "id": 25,
+      "name": "Atari 2600",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/atari2600"
+      ],
+      "destinationRomPath": "C:/ROMS/atari2600",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/atari2600"
+    },
+    {
+      "id": 26,
+      "name": "DOS",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/dos"
+      ],
+      "destinationRomPath": "C:/ROMS/dos",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/dos"
+    },
+    {
+      "id": 27,
+      "name": "Arcade",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/arcade"
+      ],
+      "destinationRomPath": "C:/ROMS/arcade",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/arcade"
+    },
+    {
+      "id": 28,
+      "name": "Nintendo Virtual Boy",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/virtualboy"
+      ],
+      "destinationRomPath": "C:/ROMS/virtualboy",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/virtualboy"
+    },
+    {
+      "id": 29,
+      "name": "Microsoft MSX",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/msx"
+      ],
+      "destinationRomPath": "C:/ROMS/msx",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/msx"
+    },
+    {
+      "id": 30,
+      "name": "Commodore 64",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/c64"
+      ],
+      "destinationRomPath": "C:/ROMS/c64",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/c64"
+    },
+    {
+      "id": 31,
+      "name": "Sinclair ZX81",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/zx81"
+      ],
+      "destinationRomPath": "C:/ROMS/zx81",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/zx81"
+    },
+    {
+      "id": 32,
+      "name": "Tangerine Computer Systems Oric",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/oric"
+      ],
+      "destinationRomPath": "C:/ROMS/oric",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/oric"
+    },
+    {
+      "id": 33,
+      "name": "Sega SG-1000",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/sg-1000"
+      ],
+      "destinationRomPath": "C:/ROMS/sg-1000",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/sg-1000"
+    },
+    {
+      "id": 34,
+      "name": "Commodore VIC-20",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/vic20"
+      ],
+      "destinationRomPath": "C:/ROMS/vic20",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/vic20"
+    },
+    {
+      "id": 35,
+      "name": "Commodore Amiga",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/amiga"
+      ],
+      "destinationRomPath": "C:/ROMS/amiga",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/amiga"
+    },
+    {
+      "id": 36,
+      "name": "Atari ST",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/atarist"
+      ],
+      "destinationRomPath": "C:/ROMS/atarist",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/atarist"
+    },
+    {
+      "id": 37,
+      "name": "Amstrad CPC",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/amstradcpc"
+      ],
+      "destinationRomPath": "C:/ROMS/amstradcpc",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/amstradcpc"
+    },
+    {
+      "id": 38,
+      "name": "Apple II",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/apple2"
+      ],
+      "destinationRomPath": "C:/ROMS/apple2",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/apple2"
+    },
+    {
+      "id": 39,
+      "name": "Sega Saturn",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/saturn"
+      ],
+      "destinationRomPath": "C:/ROMS/saturn",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/saturn"
+    },
+    {
+      "id": 40,
+      "name": "Sega Dreamcast",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/dreamcast"
+      ],
+      "destinationRomPath": "C:/ROMS/dreamcast",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/dreamcast"
+    },
+    {
+      "id": 41,
+      "name": "Sony PlayStation Portable",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/psp"
+      ],
+      "destinationRomPath": "C:/ROMS/psp",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/psp"
+    },
+    {
+      "id": 42,
+      "name": "Philips CD-i",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/cdimono1"
+      ],
+      "destinationRomPath": "C:/ROMS/cdimono1",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/cdimono1"
+    },
+    {
+      "id": 43,
+      "name": "3DO Interactive Multiplayer",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/3do"
+      ],
+      "destinationRomPath": "C:/ROMS/3do",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/3do"
+    },
+    {
+      "id": 44,
+      "name": "Coleco ColecoVision",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/colecovision"
+      ],
+      "destinationRomPath": "C:/ROMS/colecovision",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/colecovision"
+    },
+    {
+      "id": 45,
+      "name": "Mattel Electronics Intellivision",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/intellivision"
+      ],
+      "destinationRomPath": "C:/ROMS/intellivision",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/intellivision"
+    },
+    {
+      "id": 46,
+      "name": "GCE Vectrex",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/vectrex"
+      ],
+      "destinationRomPath": "C:/ROMS/vectrex",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/vectrex"
+    },
+    {
+      "id": 47,
+      "name": "NEC PC-8800 Series",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/pc88"
+      ],
+      "destinationRomPath": "C:/ROMS/pc88",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/pc88"
+    },
+    {
+      "id": 48,
+      "name": "NEC PC-9800 Series",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/pc98"
+      ],
+      "destinationRomPath": "C:/ROMS/pc98",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/pc98"
+    },
+    {
+      "id": 49,
+      "name": "NEC PC-FX",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/pcfx"
+      ],
+      "destinationRomPath": "C:/ROMS/pcfx",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/pcfx"
+    },
+    {
+      "id": 50,
+      "name": "Atari 5200",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/atari5200"
+      ],
+      "destinationRomPath": "C:/ROMS/atari5200",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/atari5200"
+    },
+    {
+      "id": 51,
+      "name": "Atari 7800",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/atari7800"
+      ],
+      "destinationRomPath": "C:/ROMS/atari7800",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/atari7800"
+    },
+    {
+      "id": 52,
+      "name": "Sharp X68000",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/x68000"
+      ],
+      "destinationRomPath": "C:/ROMS/x68000",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/x68000"
+    },
+    {
+      "id": 53,
+      "name": "Bandai WonderSwan",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/wonderswan"
+      ],
+      "destinationRomPath": "C:/ROMS/wonderswan",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/wonderswan"
+    },
+    {
+      "id": 54,
+      "name": "Casette Vision",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/???"
+      ],
+      "destinationRomPath": "C:/ROMS/???",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/???"
+    },
+    {
+      "id": 55,
+      "name": "Super Casette Vision",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/scv"
+      ],
+      "destinationRomPath": "C:/ROMS/scv",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/scv"
+    },
+    {
+      "id": 56,
+      "name": "Neo Geo CD",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/neogeocd"
+      ],
+      "destinationRomPath": "C:/ROMS/neogeocd",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/neogeocd"
+    },
+    {
+      "id": 57,
+      "name": "Fairchild Channel F",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/channelf"
+      ],
+      "destinationRomPath": "C:/ROMS/channelf",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/channelf"
+    },
+    {
+      "id": 58,
+      "name": "FM Towns",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/fmtowns"
+      ],
+      "destinationRomPath": "C:/ROMS/fmtowns",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/fmtowns"
+    },
+    {
+      "id": 59,
+      "name": "Sinclair ZX Spectrum",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/zxspectrum"
+      ],
+      "destinationRomPath": "C:/ROMS/zxspectrum",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/zxspectrum"
+    },
+    {
+      "id": 60,
+      "name": "Nintendo Game & Watch",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/gameandwatch"
+      ],
+      "destinationRomPath": "C:/ROMS/gameandwatch",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/gameandwatch"
+    },
+    {
+      "id": 61,
+      "name": "Nokia N-Gage",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/ngage"
+      ],
+      "destinationRomPath": "C:/ROMS/ngage",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/ngage"
+    },
+    {
+      "id": 62,
+      "name": "Nintendo 3DS",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/n3ds"
+      ],
+      "destinationRomPath": "C:/ROMS/n3ds",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/n3ds"
+    },
+    {
+      "id": 63,
+      "name": "Watara Supervision",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/supervision"
+      ],
+      "destinationRomPath": "C:/ROMS/supervision",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/supervision"
+    },
+    {
+      "id": 64,
+      "name": "Sharp X1",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/x1"
+      ],
+      "destinationRomPath": "C:/ROMS/x1",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/x1"
+    },
+    {
+      "id": 65,
+      "name": "TIC-80",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/tic80"
+      ],
+      "destinationRomPath": "C:/ROMS/tic80",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/tic80"
+    },
+    {
+      "id": 66,
+      "name": "Thomson TO8",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/to8"
+      ],
+      "destinationRomPath": "C:/ROMS/to8",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/to8"
+    },
+    {
+      "id": 67,
+      "name": "NEC PC-6000",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/???"
+      ],
+      "destinationRomPath": "C:/ROMS/???",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/???"
+    },
+    {
+      "id": 68,
+      "name": "Sega Pico",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/???"
+      ],
+      "destinationRomPath": "C:/ROMS/???",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/???"
+    },
+    {
+      "id": 69,
+      "name": "Creatronic Mega Duck",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/megaduck"
+      ],
+      "destinationRomPath": "C:/ROMS/megaduck",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/megaduck"
+    },
+    {
+      "id": 70,
+      "name": "Zeebo",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/???"
+      ],
+      "destinationRomPath": "C:/ROMS/???",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/???"
+    },
+    {
+      "id": 71,
+      "name": "Arduboy Miniature Game System",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/arduboy"
+      ],
+      "destinationRomPath": "C:/ROMS/arduboy",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/arduboy"
+    },
+    {
+      "id": 72,
+      "name": "WASM-4",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/wasm4"
+      ],
+      "destinationRomPath": "C:/ROMS/wasm4",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/wasm4"
+    },
+    {
+      "id": 73,
+      "name": "Emerson Arcadia 2001",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/arcadia"
+      ],
+      "destinationRomPath": "C:/ROMS/arcadia",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/arcadia"
+    },
+    {
+      "id": 74,
+      "name": "Intertron VC 4000",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/???"
+      ],
+      "destinationRomPath": "C:/ROMS/???",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/???"
+    },
+    {
+      "id": 75,
+      "name": "Elektor TV Games Computer",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/???"
+      ],
+      "destinationRomPath": "C:/ROMS/???",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/???"
+    },
+    {
+      "id": 76,
+      "name": "NEC PC Engine CD",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/pcenginecd"
+      ],
+      "destinationRomPath": "C:/ROMS/pcenginecd",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/pcenginecd"
+    },
+    {
+      "id": 77,
+      "name": "Atari Jaguar CD",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/atarijaguarcd"
+      ],
+      "destinationRomPath": "C:/ROMS/atarijaguarcd",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/atarijaguarcd"
+    },
+    {
+      "id": 78,
+      "name": "Nintendo DSi",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/nds"
+      ],
+      "destinationRomPath": "C:/ROMS/nds",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/nds"
+    },
+    {
+      "id": 79,
+      "name": "Texas Instruments TI-83",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/???"
+      ],
+      "destinationRomPath": "C:/ROMS/???",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/???"
+    },
+    {
+      "id": 80,
+      "name": "Uzebox",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/uzebox"
+      ],
+      "destinationRomPath": "C:/ROMS/uzebox",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/uzebox"
+    },
+    {
+      "id": 81,
+      "name": "Famicom Disk System",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/fds"
+      ],
+      "destinationRomPath": "C:/ROMS/fds",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/fds"
+    }
+  ]
+}
