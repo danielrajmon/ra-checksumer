@@ -81,6 +81,16 @@
       "unknownRomPath": "C:/ROMS-UNKNOWN/tg16"
     },
     {
+      "id": 8,
+      "name": "NEC TurboGrafx CD",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/tg-cd"
+      ],
+      "destinationRomPath": "C:/ROMS/tg-cd",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/tg-cd"
+    },
+    {
       "id": 9,
       "name": "Sega CD",
       "shouldArchive": false,
@@ -139,6 +149,16 @@
       ],
       "destinationRomPath": "C:/ROMS/ngp",
       "unknownRomPath": "C:/ROMS-UNKNOWN/ngp"
+    },
+    {
+      "id": 14,
+      "name": "SNK Neo Geo Pocket Color",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/ngpc"
+      ],
+      "destinationRomPath": "C:/ROMS/ngpc",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/ngpc"
     },
     {
       "id": 15,
@@ -282,13 +302,23 @@
     },
     {
       "id": 29,
-      "name": "Microsoft MSX",
+      "name": "Microsoft MSX 1",
       "shouldArchive": true,
       "sourceRomPaths": [
-        "C:/ROMS-SOURCE/msx"
+        "C:/ROMS-SOURCE/msx1"
       ],
-      "destinationRomPath": "C:/ROMS/msx",
-      "unknownRomPath": "C:/ROMS-UNKNOWN/msx"
+      "destinationRomPath": "C:/ROMS/msx1",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/msx1"
+    },
+    {
+      "id": 29,
+      "name": "Microsoft MSX 2",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/msx2"
+      ],
+      "destinationRomPath": "C:/ROMS/msx2",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/msx2"
     },
     {
       "id": 30,
@@ -529,6 +559,16 @@
       ],
       "destinationRomPath": "C:/ROMS/wonderswan",
       "unknownRomPath": "C:/ROMS-UNKNOWN/wonderswan"
+    },
+    {
+      "id": 53,
+      "name": "Bandai WonderSwan Color",
+      "shouldArchive": true,
+      "sourceRomPaths": [
+        "C:/ROMS-SOURCE/wonderswancolor"
+      ],
+      "destinationRomPath": "C:/ROMS/wonderswancolor",
+      "unknownRomPath": "C:/ROMS-UNKNOWN/wonderswancolor"
     },
     {
       "id": 54,
