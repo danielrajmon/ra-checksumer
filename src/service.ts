@@ -62,6 +62,32 @@ function sanitizeFileNamePart(value: string): string {
     return sanitized || "Unknown";
 }
 
+type ParsedChecksumFileName = {
+    baseName: string;
+    checksum: string;
+    copyIndex: number | null;
+};
+
+function parseChecksumTaggedBaseName(baseName: string): ParsedChecksumFileName | null {
+    const match = /^(.*) \[([0-9a-fA-F]{32})\](?: \((\d+)\))?$/.exec(baseName);
+    if (!match) {
+        return null;
+    }
+
+    return {
+        baseName: match[1],
+        checksum: match[2].toLowerCase(),
+        copyIndex: match[3] ? Number.parseInt(match[3], 10) : null,
+    };
+}
+
+function parseChecksumFromFileName(fileName: string): string | null {
+    const ext = path.extname(fileName);
+    const baseName = path.basename(fileName, ext);
+    const parsed = parseChecksumTaggedBaseName(baseName);
+    return parsed?.checksum ?? null;
+}
+
 function resolveRAHasherPath(): string {
     return path.resolve(__dirname, "./utils/RAHasher.exe");
 }
@@ -211,23 +237,45 @@ async function fileExists(filePath: string): Promise<boolean> {
     }
 }
 
+async function moveFile(sourceFilePath: string, destinationFilePath: string): Promise<void> {
+    if (path.resolve(sourceFilePath) === path.resolve(destinationFilePath)) {
+        return;
+    }
+
+    try {
+        await fs.rename(sourceFilePath, destinationFilePath);
+    } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== "EXDEV") {
+            throw error;
+        }
+
+        await fs.copyFile(sourceFilePath, destinationFilePath);
+        await fs.unlink(sourceFilePath);
+    }
+}
+
 async function buildNonConflictingPath(destinationDir: string, originalFileName: string, checksum: string): Promise<string> {
     const ext = path.extname(originalFileName);
-    const baseName = path.basename(originalFileName, ext);
+    const originalBaseName = path.basename(originalFileName, ext);
+    const parsedBaseName = parseChecksumTaggedBaseName(originalBaseName);
+    const taggedBaseName = parsedBaseName
+        ? `${parsedBaseName.baseName} [${parsedBaseName.checksum}]`
+        : `${originalBaseName} [${checksum}]`;
+    const startingIndex = parsedBaseName?.copyIndex ? parsedBaseName.copyIndex + 1 : 2;
 
     const firstCandidate = path.join(destinationDir, originalFileName);
     if (!(await fileExists(firstCandidate))) {
         return firstCandidate;
     }
 
-    const md5Candidate = path.join(destinationDir, `${baseName} [${checksum}]${ext}`);
-    if (!(await fileExists(md5Candidate))) {
+    const md5Candidate = path.join(destinationDir, `${taggedBaseName}${ext}`);
+    if (md5Candidate !== firstCandidate && !(await fileExists(md5Candidate))) {
         return md5Candidate;
     }
 
-    let index = 2;
+    let index = startingIndex;
     while (true) {
-        const candidate = path.join(destinationDir, `${baseName} [${checksum}] (${index})${ext}`);
+        const candidate = path.join(destinationDir, `${taggedBaseName} (${index})${ext}`);
         if (!(await fileExists(candidate))) {
             return candidate;
         }
@@ -244,11 +292,30 @@ async function moveFileToUnknownPath(
     reason: string,
 ): Promise<void> {
     await fs.mkdir(unknownRomPath, { recursive: true });
-    const destinationUnknownPath = await buildNonConflictingPath(unknownRomPath, path.basename(sourceFilePath), checksum);
-    await fs.rename(sourceFilePath, destinationUnknownPath);
+    const existingChecksum = parseChecksumFromFileName(path.basename(sourceFilePath));
+    const sourceDirectory = path.resolve(path.dirname(sourceFilePath));
+    const unknownDirectory = path.resolve(unknownRomPath);
+    const shouldKeepSourcePath = sourceDirectory === unknownDirectory && existingChecksum === checksum;
+    const destinationUnknownPath = shouldKeepSourcePath
+        ? sourceFilePath
+        : await buildNonConflictingPath(unknownRomPath, path.basename(sourceFilePath), checksum);
+
+    if (destinationUnknownPath !== sourceFilePath) {
+        await moveFile(sourceFilePath, destinationUnknownPath);
+    }
+
     await logMoved(
         `platform=${platformId} md5=${checksum} reason=${reason} source="${sourceFilePath}" destination="${destinationUnknownPath}"`,
     );
+}
+
+async function resolveChecksum(platformId: number, sourceFilePath: string): Promise<string | null> {
+    const checksumFromName = parseChecksumFromFileName(path.basename(sourceFilePath));
+    if (checksumFromName) {
+        return checksumFromName;
+    }
+
+    return hashFileWithRAHasher(platformId, sourceFilePath);
 }
 
 async function processSourceFile(
@@ -260,7 +327,7 @@ async function processSourceFile(
     shouldArchive: boolean,
     seenUnknownMd5ByPlatform: Map<number, Set<string>>,
 ): Promise<SourceFileResult> {
-    const checksum = await hashFileWithRAHasher(platformId, sourceFilePath);
+    const checksum = await resolveChecksum(platformId, sourceFilePath);
 
     if (!checksum) {
         await logUnmatched(`platform=${platformId} file="${sourceFilePath}" hash=<none>`);
@@ -318,7 +385,7 @@ async function processSourceFile(
     if (!shouldArchive) {
         await fs.mkdir(destinationRomPath, { recursive: true });
         const destinationPath = await buildNonConflictingPath(destinationRomPath, targetFileName, checksum);
-        await fs.rename(sourceFilePath, destinationPath);
+        await moveFile(sourceFilePath, destinationPath);
 
         await markFileOwned(
             matchedFile.platformId,
@@ -346,7 +413,7 @@ async function processSourceFile(
             throw new Error(`Destination archive already exists: ${destinationArchivePath}`);
         }
 
-        await fs.rename(archivePath, destinationArchivePath);
+        await moveFile(archivePath, destinationArchivePath);
         await fs.unlink(sourceFilePath);
 
         await markFileOwned(
