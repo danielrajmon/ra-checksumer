@@ -60,6 +60,50 @@ export async function findFileMatchByChecksum(platformId: number, md5: string): 
   return result.rows[0];
 }
 
+export async function findFileMatchByFileName(platformId: number, fileStem: string): Promise<FileMatch | null> {
+  const normalizedFileStem = fileStem.toLowerCase();
+
+  const result = await query<FileMatchRow>(
+    `
+      SELECT
+        f.platform_id AS "platformId",
+        f.game_id AS "gameId",
+        g.title AS "gameTitle",
+        f.name AS "fileName",
+        (
+          SELECT COUNT(*) > 1
+          FROM files f2
+          WHERE f2.platform_id = f.platform_id
+            AND f2.game_id = f.game_id
+            AND f2.is_required = TRUE
+        ) AS "hasMultipleRequiredFiles",
+        f.md5 AS md5,
+        f.is_owned AS "isOwned",
+        f.is_required AS "isRequired"
+      FROM files f
+      INNER JOIN games g
+        ON g.platform_id = f.platform_id
+        AND g.id = f.game_id
+      WHERE f.platform_id = $1
+        AND lower(
+          regexp_replace(
+            regexp_replace(coalesce(f.name, ''), '\s*<[^>]*>\s*$', ''),
+            '\.[^.]+$',
+            ''
+          )
+        ) = $2
+      LIMIT 1
+    `,
+    [platformId, normalizedFileStem],
+  );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  return result.rows[0];
+}
+
 export async function markFileOwned(
   platformId: number,
   gameId: number,

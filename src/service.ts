@@ -2,7 +2,7 @@ import { spawn } from "child_process";
 import * as fs from "fs/promises";
 import * as os from "os";
 import * as path from "path";
-import { findFileMatchByChecksum, markFileOwned } from "./db";
+import { findFileMatchByChecksum, findFileMatchByFileName, markFileOwned } from "./db";
 import { logDuplicateDeleted, logMoved, logUnmatched } from "./logger";
 
 type PlatformConfig = {
@@ -12,6 +12,7 @@ type PlatformConfig = {
     destinationRomPath?: string;
     unknownRomPath?: string;
     shouldArchive?: boolean;
+    matchByFileNameOnly?: boolean;
 };
 
 type ChecksumerConfig = {
@@ -284,6 +285,30 @@ async function buildNonConflictingPath(destinationDir: string, originalFileName:
     }
 }
 
+async function buildNonConflictingPathWithoutChecksum(destinationDir: string, originalFileName: string): Promise<string> {
+    const ext = path.extname(originalFileName);
+    const baseName = path.basename(originalFileName, ext);
+    const firstCandidate = path.join(destinationDir, originalFileName);
+
+    if (!(await fileExists(firstCandidate))) {
+        return firstCandidate;
+    }
+
+    let index = 2;
+    while (true) {
+        const candidate = path.join(destinationDir, `${baseName} (${index})${ext}`);
+        if (!(await fileExists(candidate))) {
+            return candidate;
+        }
+
+        index += 1;
+    }
+}
+
+function resolveFileStem(fileName: string): string {
+    return path.basename(fileName, path.extname(fileName)).trim().toLowerCase();
+}
+
 async function moveFileToUnknownPath(
     platformId: number,
     sourceFilePath: string,
@@ -325,8 +350,71 @@ async function processSourceFile(
     unknownRomPath: string,
     sevenZipPath: string | null,
     shouldArchive: boolean,
+    matchByFileNameOnly: boolean,
     seenUnknownMd5ByPlatform: Map<number, Set<string>>,
 ): Promise<SourceFileResult> {
+    if (matchByFileNameOnly) {
+        const originalFileName = path.basename(sourceFilePath);
+        const fileStem = resolveFileStem(originalFileName);
+        const matchedFile = await findFileMatchByFileName(platformId, fileStem);
+
+        if (!matchedFile) {
+            await fs.mkdir(unknownRomPath, { recursive: true });
+            const destinationUnknownPath = await buildNonConflictingPathWithoutChecksum(unknownRomPath, originalFileName);
+            await moveFile(sourceFilePath, destinationUnknownPath);
+            await logUnmatched(
+                `platform=${platformId} file="${sourceFilePath}" normalized="${fileStem}" reason=filename-not-found destination="${destinationUnknownPath}"`,
+            );
+            return { matched: false, archived: false, duplicateDeleted: false, skipped: false, status: "unmatched" };
+        }
+
+        if (matchedFile.isOwned) {
+            await fs.unlink(sourceFilePath);
+            await logDuplicateDeleted(
+                `platform=${platformId} file="${sourceFilePath}" normalized="${fileStem}" reason=already-owned-by-filename`,
+            );
+            return { matched: true, archived: false, duplicateDeleted: true, skipped: false, status: "already-present" };
+        }
+
+        if (matchedFile.isRequired === null) {
+            await fs.mkdir(unknownRomPath, { recursive: true });
+            const destinationUnknownPath = await buildNonConflictingPathWithoutChecksum(unknownRomPath, originalFileName);
+            await moveFile(sourceFilePath, destinationUnknownPath);
+            await logMoved(
+                `platform=${platformId} file="${sourceFilePath}" normalized="${fileStem}" reason=db-known-is-required-null destination="${destinationUnknownPath}"`,
+            );
+            return { matched: true, archived: false, duplicateDeleted: false, skipped: false, status: "unmatched" };
+        }
+
+        if (matchedFile.isRequired === false) {
+            await fs.mkdir(unknownRomPath, { recursive: true });
+            const destinationUnknownPath = await buildNonConflictingPathWithoutChecksum(unknownRomPath, originalFileName);
+            await moveFile(sourceFilePath, destinationUnknownPath);
+            await logMoved(
+                `platform=${platformId} file="${sourceFilePath}" normalized="${fileStem}" reason=db-known-not-required destination="${destinationUnknownPath}"`,
+            );
+            return { matched: true, archived: false, duplicateDeleted: false, skipped: false, status: "unmatched" };
+        }
+
+        await fs.mkdir(destinationRomPath, { recursive: true });
+        const destinationPath = path.join(destinationRomPath, originalFileName);
+
+        if (await fileExists(destinationPath)) {
+            throw new Error(`Destination file already exists: ${destinationPath}`);
+        }
+
+        await moveFile(sourceFilePath, destinationPath);
+        await markFileOwned(
+            matchedFile.platformId,
+            matchedFile.gameId,
+            matchedFile.md5,
+        );
+        await logMoved(
+            `platform=${platformId} file="${sourceFilePath}" normalized="${fileStem}" destination="${destinationPath}" archive=false mode=filename-only`,
+        );
+        return { matched: true, archived: false, duplicateDeleted: false, skipped: false, status: "done" };
+    }
+
     const checksum = await resolveChecksum(platformId, sourceFilePath);
 
     if (!checksum) {
@@ -420,7 +508,6 @@ async function processSourceFile(
             matchedFile.platformId,
             matchedFile.gameId,
             matchedFile.md5,
-            path.basename(sourceFilePath),
         );
 
         await logMoved(
@@ -444,7 +531,9 @@ export async function runChecksumerService(): Promise<ProcessSummary> {
     const configPath = path.resolve(__dirname, "../platforms.json");
     const rawConfig = await fs.readFile(configPath, "utf8");
     const platformConfigs = parsePlatformsConfig(rawConfig);
-    const shouldUseArchive = platformConfigs.some((platform) => platform.shouldArchive !== false);
+    const shouldUseArchive = platformConfigs.some(
+        (platform) => platform.shouldArchive !== false && platform.matchByFileNameOnly !== true,
+    );
     const sevenZipPath = shouldUseArchive ? await resolveSevenZipPath() : null;
 
     const summary: ProcessSummary = {
@@ -462,6 +551,7 @@ export async function runChecksumerService(): Promise<ProcessSummary> {
         const destinationRomPath = typeof platform.destinationRomPath === "string" ? platform.destinationRomPath : "";
         const unknownRomPath = typeof platform.unknownRomPath === "string" ? platform.unknownRomPath : "";
         const shouldArchive = platform.shouldArchive !== false;
+        const matchByFileNameOnly = platform.matchByFileNameOnly === true;
         const sourceRomPaths = Array.isArray(platform.sourceRomPaths)
             ? platform.sourceRomPaths.map((value) => String(value).trim()).filter(Boolean)
             : [];
@@ -496,6 +586,7 @@ export async function runChecksumerService(): Promise<ProcessSummary> {
                     unknownRomPath,
                     sevenZipPath,
                     shouldArchive,
+                    matchByFileNameOnly,
                     seenUnknownMd5ByPlatform,
                 );
                 const fileName = path.basename(filePath);
