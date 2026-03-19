@@ -285,10 +285,10 @@
       "name": "Arcade",
       "shouldArchive": true,
       "sourceRomPaths": [
-        "A:/ROMS-UNKNOWN/arcade"
+        "A:/ROMS-UNKNOWN/fbneo"
       ],
-      "destinationRomPath": "C:/ROMS/arcade",
-      "unknownRomPath": "A:/ROMS-UNKNOWN/arcade"
+      "destinationRomPath": "C:/ROMS/fbneo",
+      "unknownRomPath": "A:/ROMS-UNKNOWN/fbneo"
     },
     {
       "id": 28,
