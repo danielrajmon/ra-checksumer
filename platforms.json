@@ -426,10 +426,10 @@
       "name": "Sega Dreamcast",
       "shouldArchive": false,
       "sourceRomPaths": [
-        "B:/ROMS-UNKNOWN/dreamcast"
+        "A:/ROMS-UNKNOWN/dreamcast"
       ],
       "destinationRomPath": "C:/ROMS/dreamcast",
-      "unknownRomPath": "B:/ROMS-UNKNOWN/dreamcast"
+      "unknownRomPath": "A:/ROMS-UNKNOWN/dreamcast"
     },
     {
       "id": 41,
@@ -456,10 +456,10 @@
       "name": "3DO Interactive Multiplayer",
       "shouldArchive": false,
       "sourceRomPaths": [
-        "B:/ROMS-UNKNOWN/3do"
+        "A:/ROMS-UNKNOWN/3do"
       ],
       "destinationRomPath": "C:/ROMS/3do",
-      "unknownRomPath": "B:/ROMS-UNKNOWN/3do"
+      "unknownRomPath": "A:/ROMS-UNKNOWN/3do"
     },
     {
       "id": 44,
