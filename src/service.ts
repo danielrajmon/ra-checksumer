@@ -16,7 +16,13 @@ type PlatformConfig = {
 };
 
 type ChecksumerConfig = {
+    processOnlyPlatformId?: number | null;
     platforms?: PlatformConfig[];
+};
+
+type ParsedConfig = {
+    processOnlyPlatformId: number | null;
+    platforms: PlatformConfig[];
 };
 
 type ProcessSummary = {
@@ -522,15 +528,30 @@ async function processSourceFile(
     }
 }
 
-function parsePlatformsConfig(rawContent: string): PlatformConfig[] {
+function parsePlatformsConfig(rawContent: string): ParsedConfig {
     const parsed = JSON.parse(rawContent) as ChecksumerConfig;
-    return Array.isArray(parsed.platforms) ? parsed.platforms : [];
+    const processOnlyPlatformId = parsed.processOnlyPlatformId == null
+        ? null
+        : Number.parseInt(String(parsed.processOnlyPlatformId), 10);
+
+    return {
+        processOnlyPlatformId: Number.isNaN(processOnlyPlatformId) ? null : processOnlyPlatformId,
+        platforms: Array.isArray(parsed.platforms) ? parsed.platforms : [],
+    };
 }
 
 export async function runChecksumerService(): Promise<ProcessSummary> {
     const configPath = path.resolve(__dirname, "../platforms.json");
     const rawConfig = await fs.readFile(configPath, "utf8");
-    const platformConfigs = parsePlatformsConfig(rawConfig);
+    const parsedConfig = parsePlatformsConfig(rawConfig);
+    const platformConfigs = parsedConfig.processOnlyPlatformId == null
+        ? parsedConfig.platforms
+        : parsedConfig.platforms.filter((platform) => Number.parseInt(String(platform.id), 10) === parsedConfig.processOnlyPlatformId);
+
+    if (parsedConfig.processOnlyPlatformId != null && platformConfigs.length === 0) {
+        console.warn(`[checksumer] no platform found for processOnlyPlatformId=${parsedConfig.processOnlyPlatformId}`);
+    }
+
     const shouldUseArchive = platformConfigs.some(
         (platform) => platform.shouldArchive !== false && platform.matchByFileNameOnly !== true,
     );
