@@ -285,7 +285,7 @@
       "id": 27,
       "name": "Arcade",
       "matchByFileNameOnly": true,
-      "shouldArchive": true,
+      "shouldArchive": false,
       "sourceRomPaths": [
         "A:/ROMS-UNKNOWN/fbneo"
       ],
