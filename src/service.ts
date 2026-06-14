@@ -291,26 +291,6 @@ async function buildNonConflictingPath(destinationDir: string, originalFileName:
     }
 }
 
-async function buildNonConflictingPathWithoutChecksum(destinationDir: string, originalFileName: string): Promise<string> {
-    const ext = path.extname(originalFileName);
-    const baseName = path.basename(originalFileName, ext);
-    const firstCandidate = path.join(destinationDir, originalFileName);
-
-    if (!(await fileExists(firstCandidate))) {
-        return firstCandidate;
-    }
-
-    let index = 2;
-    while (true) {
-        const candidate = path.join(destinationDir, `${baseName} (${index})${ext}`);
-        if (!(await fileExists(candidate))) {
-            return candidate;
-        }
-
-        index += 1;
-    }
-}
-
 function resolveFileStem(fileName: string): string {
     return path.basename(fileName, path.extname(fileName)).trim().toLowerCase();
 }
@@ -323,13 +303,20 @@ async function moveFileToUnknownPath(
     reason: string,
 ): Promise<void> {
     await fs.mkdir(unknownRomPath, { recursive: true });
-    const existingChecksum = parseChecksumFromFileName(path.basename(sourceFilePath));
     const sourceDirectory = path.resolve(path.dirname(sourceFilePath));
     const unknownDirectory = path.resolve(unknownRomPath);
-    const shouldKeepSourcePath = sourceDirectory === unknownDirectory && existingChecksum === checksum;
-    const destinationUnknownPath = shouldKeepSourcePath
-        ? sourceFilePath
-        : await buildNonConflictingPath(unknownRomPath, path.basename(sourceFilePath), checksum);
+    const destinationUnknownPath = path.join(unknownRomPath, path.basename(sourceFilePath));
+
+    if (sourceDirectory === unknownDirectory) {
+        await logUnmatched(
+            `platform=${platformId} md5=${checksum} reason=${reason} source="${sourceFilePath}" destination="${destinationUnknownPath}" note=left-in-place`,
+        );
+        return;
+    }
+
+    if (await fileExists(destinationUnknownPath)) {
+        throw new Error(`Destination file already exists: ${destinationUnknownPath}`);
+    }
 
     if (destinationUnknownPath !== sourceFilePath) {
         await moveFile(sourceFilePath, destinationUnknownPath);
@@ -366,7 +353,7 @@ async function processSourceFile(
 
         if (!matchedFile) {
             await fs.mkdir(unknownRomPath, { recursive: true });
-            const destinationUnknownPath = await buildNonConflictingPathWithoutChecksum(unknownRomPath, originalFileName);
+            const destinationUnknownPath = path.join(unknownRomPath, originalFileName);
             await moveFile(sourceFilePath, destinationUnknownPath);
             await logUnmatched(
                 `platform=${platformId} file="${sourceFilePath}" normalized="${fileStem}" reason=filename-not-found destination="${destinationUnknownPath}"`,
@@ -384,7 +371,7 @@ async function processSourceFile(
 
         if (matchedFile.isRequired === null) {
             await fs.mkdir(unknownRomPath, { recursive: true });
-            const destinationUnknownPath = await buildNonConflictingPathWithoutChecksum(unknownRomPath, originalFileName);
+            const destinationUnknownPath = path.join(unknownRomPath, originalFileName);
             await moveFile(sourceFilePath, destinationUnknownPath);
             await logMoved(
                 `platform=${platformId} file="${sourceFilePath}" normalized="${fileStem}" reason=db-known-is-required-null destination="${destinationUnknownPath}"`,
@@ -394,7 +381,7 @@ async function processSourceFile(
 
         if (matchedFile.isRequired === false) {
             await fs.mkdir(unknownRomPath, { recursive: true });
-            const destinationUnknownPath = await buildNonConflictingPathWithoutChecksum(unknownRomPath, originalFileName);
+            const destinationUnknownPath = path.join(unknownRomPath, originalFileName);
             await moveFile(sourceFilePath, destinationUnknownPath);
             await logMoved(
                 `platform=${platformId} file="${sourceFilePath}" normalized="${fileStem}" reason=db-known-not-required destination="${destinationUnknownPath}"`,
