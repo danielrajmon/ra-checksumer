@@ -212,6 +212,16 @@
       "unknownRomPath": "A:/ROMS-UNKNOWN/wii"
     },
     {
+      "id": 19,
+      "name": "Nintendo Wiiware",
+      "shouldArchive": false,
+      "sourceRomPaths": [
+        "A:/ROMS-UNKNOWN/wiiware"
+      ],
+      "destinationRomPath": "C:/ROMS/wii",
+      "unknownRomPath": "A:/ROMS-UNKNOWN/wiiware"
+    },
+    {
       "id": 20,
       "name": "Nintendo Wii U",
       "shouldArchive": false,
