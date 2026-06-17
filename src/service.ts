@@ -532,7 +532,7 @@ async function processSourceFile(
         : matchedFile.gameTitle;
     const safeTargetBaseName = sanitizeFileNamePart(preferredBaseName);
     const sourceExtension = path.extname(sourceFilePath) || ".bin";
-    const targetFileName = `${safeTargetBaseName} [${checksum}]${sourceExtension}`;
+    const targetFileName = `${safeTargetBaseName}${sourceExtension}`;
 
     if (!shouldArchive) {
         await fs.mkdir(destinationRomPath, { recursive: true });
