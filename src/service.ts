@@ -295,19 +295,91 @@ function resolveFileStem(fileName: string): string {
     return path.basename(fileName, path.extname(fileName)).trim().toLowerCase();
 }
 
+function buildChecksumTaggedFileName(originalFileName: string, checksum: string): string {
+    const ext = path.extname(originalFileName);
+    const originalBaseName = path.basename(originalFileName, ext);
+    const parsedBaseName = parseChecksumTaggedBaseName(originalBaseName);
+
+    if (parsedBaseName?.checksum === checksum) {
+        return originalFileName;
+    }
+
+    const baseNameWithoutChecksum = parsedBaseName ? parsedBaseName.baseName : originalBaseName;
+    return `${baseNameWithoutChecksum} [${checksum}]${ext}`;
+}
+
+async function buildUnknownChecksumIndex(directoryPath: string): Promise<Map<string, string>> {
+    const checksumIndex = new Map<string, string>();
+    const entries = await fs.readdir(directoryPath, { withFileTypes: true });
+
+    for (const entry of entries) {
+        if (!entry.isFile()) {
+            continue;
+        }
+
+        const parsedChecksum = parseChecksumFromFileName(entry.name);
+        if (parsedChecksum) {
+            const candidatePath = path.join(directoryPath, entry.name);
+            const existingPath = checksumIndex.get(parsedChecksum);
+
+            if (!existingPath) {
+                checksumIndex.set(parsedChecksum, candidatePath);
+                continue;
+            }
+
+            const existingParsed = parseChecksumTaggedBaseName(path.basename(existingPath, path.extname(existingPath)));
+            const candidateParsed = parseChecksumTaggedBaseName(path.basename(candidatePath, path.extname(candidatePath)));
+            const shouldReplace = existingParsed?.copyIndex != null && candidateParsed?.copyIndex == null;
+
+            if (shouldReplace) {
+                checksumIndex.set(parsedChecksum, candidatePath);
+            }
+        }
+    }
+
+    return checksumIndex;
+}
+
 async function moveFileToUnknownPath(
     platformId: number,
     sourceFilePath: string,
     unknownRomPath: string,
     checksum: string,
     reason: string,
+    knownUnknownChecksumPaths: Map<string, string>,
 ): Promise<void> {
     await fs.mkdir(unknownRomPath, { recursive: true });
     const sourceDirectory = path.resolve(path.dirname(sourceFilePath));
     const unknownDirectory = path.resolve(unknownRomPath);
-    const destinationUnknownPath = path.join(unknownRomPath, path.basename(sourceFilePath));
+    const currentFileName = path.basename(sourceFilePath);
+    const currentChecksum = parseChecksumFromFileName(currentFileName);
+    const targetFileName = buildChecksumTaggedFileName(currentFileName, checksum);
+    let destinationUnknownPath = path.join(unknownRomPath, targetFileName);
+
+    if (path.resolve(sourceFilePath) !== path.resolve(destinationUnknownPath)) {
+        destinationUnknownPath = await buildNonConflictingPath(unknownRomPath, targetFileName, checksum);
+    }
+    const existingSameChecksumPath = knownUnknownChecksumPaths.get(checksum) ?? null;
+
+    if (existingSameChecksumPath && path.resolve(existingSameChecksumPath) !== path.resolve(sourceFilePath)) {
+        await fs.unlink(sourceFilePath);
+        await logDuplicateDeleted(
+            `platform=${platformId} md5=${checksum} reason=unknown-md5-already-in-unknown-path file="${sourceFilePath}" existing="${existingSameChecksumPath}"`,
+        );
+        return;
+    }
 
     if (sourceDirectory === unknownDirectory) {
+        if (currentChecksum === checksum) {
+            destinationUnknownPath = sourceFilePath;
+        }
+
+        if (path.resolve(sourceFilePath) !== path.resolve(destinationUnknownPath)) {
+            await moveFile(sourceFilePath, destinationUnknownPath);
+        }
+
+        knownUnknownChecksumPaths.set(checksum, destinationUnknownPath);
+
         await logUnmatched(
             `platform=${platformId} md5=${checksum} reason=${reason} source="${sourceFilePath}" destination="${destinationUnknownPath}" note=left-in-place`,
         );
@@ -322,18 +394,11 @@ async function moveFileToUnknownPath(
         await moveFile(sourceFilePath, destinationUnknownPath);
     }
 
+    knownUnknownChecksumPaths.set(checksum, destinationUnknownPath);
+
     await logMoved(
         `platform=${platformId} md5=${checksum} reason=${reason} source="${sourceFilePath}" destination="${destinationUnknownPath}"`,
     );
-}
-
-async function resolveChecksum(platformId: number, sourceFilePath: string): Promise<string | null> {
-    const checksumFromName = parseChecksumFromFileName(path.basename(sourceFilePath));
-    if (checksumFromName) {
-        return checksumFromName;
-    }
-
-    return hashFileWithRAHasher(platformId, sourceFilePath);
 }
 
 async function processSourceFile(
@@ -345,6 +410,7 @@ async function processSourceFile(
     shouldArchive: boolean,
     matchByFileNameOnly: boolean,
     seenUnknownMd5ByPlatform: Map<number, Set<string>>,
+    knownUnknownChecksumPaths: Map<string, string>,
 ): Promise<SourceFileResult> {
     if (matchByFileNameOnly) {
         const originalFileName = path.basename(sourceFilePath);
@@ -408,14 +474,19 @@ async function processSourceFile(
         return { matched: true, archived: false, duplicateDeleted: false, skipped: false, status: "done" };
     }
 
-    const checksum = await resolveChecksum(platformId, sourceFilePath);
+    const checksumFromName = parseChecksumFromFileName(path.basename(sourceFilePath));
+    let checksum = checksumFromName;
+    if (!checksum) {
+        checksum = await hashFileWithRAHasher(platformId, sourceFilePath);
+    }
 
     if (!checksum) {
         await logUnmatched(`platform=${platformId} file="${sourceFilePath}" hash=<none>`);
         return { matched: false, archived: false, duplicateDeleted: false, skipped: true, status: "unmatched" };
     }
 
-    const matchedFile = await findFileMatchByChecksum(platformId, checksum);
+    let matchedFile = await findFileMatchByChecksum(platformId, checksum);
+
     if (!matchedFile) {
         let seenSet = seenUnknownMd5ByPlatform.get(platformId);
         if (!seenSet) {
@@ -436,7 +507,7 @@ async function processSourceFile(
         }
 
         seenSet.add(checksum);
-        await moveFileToUnknownPath(platformId, sourceFilePath, unknownRomPath, checksum, "unknown-first-kept");
+        await moveFileToUnknownPath(platformId, sourceFilePath, unknownRomPath, checksum, "unknown-first-kept", knownUnknownChecksumPaths);
         return { matched: false, archived: false, duplicateDeleted: false, skipped: false, status: "unmatched" };
     }
 
@@ -447,12 +518,12 @@ async function processSourceFile(
     }
 
     if (matchedFile.isRequired === null) {
-        await moveFileToUnknownPath(platformId, sourceFilePath, unknownRomPath, checksum, "db-known-is-required-null");
+        await moveFileToUnknownPath(platformId, sourceFilePath, unknownRomPath, checksum, "db-known-is-required-null", knownUnknownChecksumPaths);
         return { matched: true, archived: false, duplicateDeleted: false, skipped: false, status: "unmatched" };
     }
 
     if (matchedFile.isRequired === false) {
-        await moveFileToUnknownPath(platformId, sourceFilePath, unknownRomPath, checksum, "db-known-not-required");
+        await moveFileToUnknownPath(platformId, sourceFilePath, unknownRomPath, checksum, "db-known-not-required", knownUnknownChecksumPaths);
         return { matched: true, archived: false, duplicateDeleted: false, skipped: false, status: "unmatched" };
     }
 
@@ -461,7 +532,7 @@ async function processSourceFile(
         : matchedFile.gameTitle;
     const safeTargetBaseName = sanitizeFileNamePart(preferredBaseName);
     const sourceExtension = path.extname(sourceFilePath) || ".bin";
-    const targetFileName = `${safeTargetBaseName}${sourceExtension}`;
+    const targetFileName = `${safeTargetBaseName} [${checksum}]${sourceExtension}`;
 
     if (!shouldArchive) {
         await fs.mkdir(destinationRomPath, { recursive: true });
@@ -573,6 +644,8 @@ export async function runChecksumerService(): Promise<ProcessSummary> {
 
         summary.platformsProcessed += 1;
 
+        const knownUnknownChecksumPaths = await buildUnknownChecksumIndex(unknownRomPath);
+
         const allFiles: string[] = [];
 
         for (const sourceRootPath of sourceRomPaths) {
@@ -596,6 +669,7 @@ export async function runChecksumerService(): Promise<ProcessSummary> {
                     shouldArchive,
                     matchByFileNameOnly,
                     seenUnknownMd5ByPlatform,
+                    knownUnknownChecksumPaths,
                 );
                 const fileName = path.basename(filePath);
                 console.log(`(${index + 1}/${totalFiles}) ${colorizeStatus(result.status)} ${fileName}`);
