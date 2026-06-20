@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "report:patch-candidates": "tsx src/report-patch-candidates.ts"
   },
   "repository": {
     "type": "git",
