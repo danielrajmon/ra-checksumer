@@ -27,6 +27,11 @@ type ChecksumerConfig = {
     platforms?: PlatformConfig[];
 };
 
+type PlatformContext = {
+    code: string;
+    searchPaths: string[];
+};
+
 function extractPlatformCodeFromPath(value: string): string | null {
     const normalized = value.replace(/\\/g, "/").trim();
     const parts = normalized.split("/").filter(Boolean);
@@ -34,11 +39,11 @@ function extractPlatformCodeFromPath(value: string): string | null {
     return last || null;
 }
 
-async function loadPlatformCodeMap(): Promise<Map<number, string>> {
+async function loadPlatformContexts(): Promise<Map<number, PlatformContext>> {
     const configPath = path.resolve(__dirname, "../platforms.json");
     const raw = await fs.readFile(configPath, "utf8");
     const parsed = JSON.parse(raw) as ChecksumerConfig;
-    const map = new Map<number, string>();
+    const map = new Map<number, PlatformContext>();
 
     for (const platform of parsed.platforms ?? []) {
         const platformId = Number.parseInt(String(platform.id), 10);
@@ -53,15 +58,79 @@ async function loadPlatformCodeMap(): Promise<Map<number, string>> {
                 ? extractPlatformCodeFromPath(String(platform.sourceRomPaths[0]))
                 : null);
 
-        if (code && !map.has(platformId)) {
-            map.set(platformId, code);
-        }
+        const existing = map.get(platformId);
+        const mergedSearchPaths = [
+            ...(existing?.searchPaths ?? []),
+            ...((platform.sourceRomPaths ?? []).map((value) => String(value).trim()).filter(Boolean)),
+        ];
+        const uniqueSearchPaths = Array.from(new Set(mergedSearchPaths));
+
+        map.set(platformId, {
+            code: code ?? existing?.code ?? String(platformId),
+            searchPaths: uniqueSearchPaths,
+        });
     }
 
     return map;
 }
 
-function printCandidates(rows: CandidateRow[], platformCodeById: Map<number, string>): void {
+function parseMd5FromFileName(fileName: string): string | null {
+    const baseName = path.basename(fileName, path.extname(fileName));
+    const bracketMatch = /\[([0-9a-fA-F]{32})\](?: \(\d+\))?$/.exec(baseName);
+    if (bracketMatch) {
+        return bracketMatch[1].toLowerCase();
+    }
+
+    const inlineMatch = /\b([0-9a-fA-F]{32})\b/.exec(baseName);
+    return inlineMatch ? inlineMatch[1].toLowerCase() : null;
+}
+
+async function listFilesRecursiveSafe(dirPath: string): Promise<string[]> {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    const files: string[] = [];
+
+    for (const entry of entries) {
+        const fullPath = path.join(dirPath, entry.name);
+
+        if (entry.isDirectory()) {
+            files.push(...(await listFilesRecursiveSafe(fullPath)));
+            continue;
+        }
+
+        if (entry.isFile()) {
+            files.push(fullPath);
+        }
+    }
+
+    return files;
+}
+
+async function buildLocalMd5ByPlatform(platformContexts: Map<number, PlatformContext>): Promise<Map<number, Set<string>>> {
+    const byPlatform = new Map<number, Set<string>>();
+
+    for (const [platformId, context] of platformContexts.entries()) {
+        const md5Set = new Set<string>();
+
+        for (const searchPath of context.searchPaths) {
+            try {
+                const files = await listFilesRecursiveSafe(searchPath);
+                for (const filePath of files) {
+                    const md5 = parseMd5FromFileName(path.basename(filePath));
+                    if (md5) {
+                        md5Set.add(md5);
+                    }
+                }
+            } catch {
+            }
+        }
+
+        byPlatform.set(platformId, md5Set);
+    }
+
+    return byPlatform;
+}
+
+function printCandidates(rows: CandidateRow[], platformContexts: Map<number, PlatformContext>): void {
     const columns = [
         { key: "platformCode", header: "platformCode" },
         { key: "gameTitle", header: "gameTitle" },
@@ -71,7 +140,7 @@ function printCandidates(rows: CandidateRow[], platformCodeById: Map<number, str
 
     const toCell = (row: CandidateRow, key: (typeof columns)[number]["key"]): string => {
         if (key === "platformCode") {
-            return platformCodeById.get(row.platformId) ?? String(row.platformId);
+            return platformContexts.get(row.platformId)?.code ?? String(row.platformId);
         }
 
         return String((row as unknown as Record<string, string | null>)[key] ?? "");
@@ -145,7 +214,9 @@ async function printStrictNotOwnedSummary(): Promise<void> {
     console.log(`games: ${row.totalGames}, missing files: ${row.totalFiles}`);
 }
 
-async function printPracticalCandidates(platformCodeById: Map<number, string>, limit = 200): Promise<void> {
+async function printPracticalCandidates(platformContexts: Map<number, PlatformContext>, limit = 200): Promise<void> {
+    const localMd5ByPlatform = await buildLocalMd5ByPlatform(platformContexts);
+
     const summary = await query<SummaryRow>(
         `
       SELECT
@@ -169,7 +240,7 @@ async function printPracticalCandidates(platformCodeById: Map<number, string>, l
     `,
     );
 
-    const rows = await query<CandidateRow>(
+        const rows = await query<CandidateRow>(
         `
       SELECT
         g.platform_id AS "platformId",
@@ -192,31 +263,39 @@ async function printPracticalCandidates(platformCodeById: Map<number, string>, l
           AND af1.game_id = g.id
           AND af1.md5 <> rf.md5
           AND COALESCE(af1.is_required, FALSE) = FALSE
-        ORDER BY COALESCE(af1.is_owned, FALSE) DESC, af1.name ASC
+                ORDER BY COALESCE(af1.is_owned, FALSE) DESC, af1.name ASC
         LIMIT 1
       ) af ON TRUE
       WHERE COALESCE(rf.is_required, FALSE) = TRUE
         AND COALESCE(rf.is_owned, FALSE) = FALSE
         AND COALESCE(g.is_owned, FALSE) = FALSE
       ORDER BY g.platform_id, g.title, rf.name
-      LIMIT $1
     `,
-        [limit],
     );
 
-    const totals = summary.rows[0];
-    console.log("\n[patch-candidates] practical mode (not-owned games, required hash missing, non-required sibling exists)");
-    console.log(`games: ${totals.totalGames}, missing required files: ${totals.totalFiles}, showing rows: ${rows.rowCount}`);
+    const locallyPresentRows = rows.rows.filter((row) => {
+        const md5Set = localMd5ByPlatform.get(row.platformId);
+        return md5Set?.has(row.alternateMd5.toLowerCase()) ?? false;
+    });
 
-    if (rows.rowCount > 0) {
-        printCandidates(rows.rows, platformCodeById);
+    const limitedRows = locallyPresentRows.slice(0, limit);
+    const uniqueGames = new Set(limitedRows.map((row) => `${row.platformId}|${row.gameTitle}`));
+
+    const totals = summary.rows[0];
+    console.log("\n[patch-candidates] practical mode (not-owned games, required hash missing, valid non-required sibling exists)");
+    console.log(
+        `db games: ${totals.totalGames}, db missing required files: ${totals.totalFiles}, local md5-matched rows: ${locallyPresentRows.length}, showing rows: ${limitedRows.length}, showing games: ${uniqueGames.size}`,
+    );
+
+    if (limitedRows.length > 0) {
+        printCandidates(limitedRows, platformContexts);
     }
 }
 
 async function run(): Promise<void> {
-    const platformCodeById = await loadPlatformCodeMap();
+    const platformContexts = await loadPlatformContexts();
     await printStrictNotOwnedSummary();
-    await printPracticalCandidates(platformCodeById);
+    await printPracticalCandidates(platformContexts);
 }
 
 void run().catch((error) => {
