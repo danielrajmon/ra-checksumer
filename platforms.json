@@ -82,16 +82,6 @@
       "unknownRomPath": "A:/ROMS-UNKNOWN/tg16"
     },
     {
-      "id": 8,
-      "name": "NEC TurboGrafx CD",
-      "shouldArchive": true,
-      "sourceRomPaths": [
-        "A:/ROMS-UNKNOWN/tg-cd"
-      ],
-      "destinationRomPath": "C:/ROMS/tg-cd",
-      "unknownRomPath": "A:/ROMS-UNKNOWN/tg-cd"
-    },
-    {
       "id": 9,
       "name": "Sega CD",
       "shouldArchive": false,
@@ -807,10 +797,10 @@
       "name": "NEC PC Engine CD",
       "shouldArchive": false,
       "sourceRomPaths": [
-        "A:/ROMS-UNKNOWN/pcenginecd"
+        "A:/ROMS-UNKNOWN/tg-cd"
       ],
-      "destinationRomPath": "C:/ROMS/pcenginecd",
-      "unknownRomPath": "A:/ROMS-UNKNOWN/pcenginecd"
+      "destinationRomPath": "C:/ROMS/tg-cd",
+      "unknownRomPath": "A:/ROMS-UNKNOWN/tg-cd"
     },
     {
       "id": 77,
