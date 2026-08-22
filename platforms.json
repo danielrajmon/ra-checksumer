@@ -577,10 +577,10 @@
       "name": "Casette Vision",
       "shouldArchive": true,
       "sourceRomPaths": [
-        "A:/ROMS-UNKNOWN/???"
+        "A:/ROMS-UNKNOWN/todo"
       ],
-      "destinationRomPath": "C:/ROMS/???",
-      "unknownRomPath": "A:/ROMS-UNKNOWN/???"
+      "destinationRomPath": "C:/ROMS/todo",
+      "unknownRomPath": "A:/ROMS-UNKNOWN/todo"
     },
     {
       "id": 55,
@@ -707,20 +707,20 @@
       "name": "NEC PC-6000",
       "shouldArchive": true,
       "sourceRomPaths": [
-        "A:/ROMS-UNKNOWN/???"
+        "A:/ROMS-UNKNOWN/todo"
       ],
-      "destinationRomPath": "C:/ROMS/???",
-      "unknownRomPath": "A:/ROMS-UNKNOWN/???"
+      "destinationRomPath": "C:/ROMS/todo",
+      "unknownRomPath": "A:/ROMS-UNKNOWN/todo"
     },
     {
       "id": 68,
       "name": "Sega Pico",
       "shouldArchive": true,
       "sourceRomPaths": [
-        "A:/ROMS-UNKNOWN/???"
+        "A:/ROMS-UNKNOWN/todo"
       ],
-      "destinationRomPath": "C:/ROMS/???",
-      "unknownRomPath": "A:/ROMS-UNKNOWN/???"
+      "destinationRomPath": "C:/ROMS/todo",
+      "unknownRomPath": "A:/ROMS-UNKNOWN/todo"
     },
     {
       "id": 69,
@@ -737,10 +737,10 @@
       "name": "Zeebo",
       "shouldArchive": true,
       "sourceRomPaths": [
-        "A:/ROMS-UNKNOWN/???"
+        "A:/ROMS-UNKNOWN/todo"
       ],
-      "destinationRomPath": "C:/ROMS/???",
-      "unknownRomPath": "A:/ROMS-UNKNOWN/???"
+      "destinationRomPath": "C:/ROMS/todo",
+      "unknownRomPath": "A:/ROMS-UNKNOWN/todo"
     },
     {
       "id": 71,
@@ -827,10 +827,10 @@
       "name": "Texas Instruments TI-83",
       "shouldArchive": true,
       "sourceRomPaths": [
-        "A:/ROMS-UNKNOWN/???"
+        "A:/ROMS-UNKNOWN/todo"
       ],
-      "destinationRomPath": "C:/ROMS/???",
-      "unknownRomPath": "A:/ROMS-UNKNOWN/???"
+      "destinationRomPath": "C:/ROMS/todo",
+      "unknownRomPath": "A:/ROMS-UNKNOWN/todo"
     },
     {
       "id": 80,
